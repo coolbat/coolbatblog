@@ -1,0 +1,20 @@
+---
+import { SITE } from "@config";
+import Layout from "@layouts/Layout.astro";
+import Main from "@layouts/Main.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import ProjectCard from "@components/ProjectCard.astro";
+import { PROJECTS } from "../data/projects.js";
+
+---
+
+<Layout title={`项目 | ${SITE.title}`}>
+  <Header activeNav="projects" />
+  <Main pageTitle="项目" pageDesc="这里展示了我构建的一些项目">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      {PROJECTS.map(project => <ProjectCard project={project} />)}
+    </div>
+  </Main>
+  <Footer />
+</Layout> 

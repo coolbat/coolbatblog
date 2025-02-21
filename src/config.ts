@@ -1,22 +1,22 @@
-import type { Site, SocialObjects } from "./types";
+import type { Site, SocialObjects } from "./types.js";
 
 export const SITE: Site = {
-  website: "https://astro-paper.pages.dev/", // replace this with your deployed domain
-  author: "Sat Naing",
-  profile: "https://satnaing.dev/",
-  desc: "A minimal, responsive and SEO-friendly Astro blog theme.",
-  title: "AstroPaper",
-  ogImage: "astropaper-og.jpg",
+  website: "https://coolbat.xyz/", // replace this with your deployed domain
+  author: "Coolbat",
+  profile: "https://coolbat.xyz/",
+  desc: "About AI, website, iOS app independent development, SEO, my personal experience sharing.",
+  title: "Coolbat",
+  ogImage: "coolbat-og.jpg",
   lightAndDarkMode: true,
-  postPerIndex: 4,
-  postPerPage: 3,
+  postPerIndex: 5,
+  postPerPage: 5,
   scheduledPostMargin: 15 * 60 * 1000, // 15 minutes
   showArchives: true,
-  editPost: {
-    url: "https://github.com/satnaing/astro-paper/edit/main/src/content/blog",
-    text: "Suggest Changes",
-    appendFilePath: true,
-  },
+  // editPost: {
+  //   url: "https://github.com/satnaing/astro-paper/edit/main/src/content/blog",
+  //   text: "Suggest Changes",
+  //   appendFilePath: true,
+  // },
 };
 
 export const LOCALE = {
@@ -34,7 +34,7 @@ export const LOGO_IMAGE = {
 export const SOCIALS: SocialObjects = [
   {
     name: "Github",
-    href: "https://github.com/satnaing/astro-paper",
+    href: "https://github.com/coolbat/coolbatbolg",
     linkTitle: ` ${SITE.title} on Github`,
     active: true,
   },
@@ -42,19 +42,19 @@ export const SOCIALS: SocialObjects = [
     name: "Facebook",
     href: "https://github.com/satnaing/astro-paper",
     linkTitle: `${SITE.title} on Facebook`,
-    active: true,
+    active: false,
   },
   {
     name: "Instagram",
     href: "https://github.com/satnaing/astro-paper",
     linkTitle: `${SITE.title} on Instagram`,
-    active: true,
+    active: false,
   },
   {
     name: "LinkedIn",
     href: "https://github.com/satnaing/astro-paper",
     linkTitle: `${SITE.title} on LinkedIn`,
-    active: true,
+    active: false,
   },
   {
     name: "Mail",
@@ -64,9 +64,9 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "X",
-    href: "https://github.com/satnaing/astro-paper",
+    href: "https://x.com/coolbat1999",
     linkTitle: `${SITE.title} on X`,
-    active: false,
+    active: true,
   },
   {
     name: "Twitch",
@@ -76,9 +76,9 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "YouTube",
-    href: "https://github.com/satnaing/astro-paper",
+    href: "https://www.youtube.com/@coolbat1984",
     linkTitle: `${SITE.title} on YouTube`,
-    active: false,
+    active: true,
   },
   {
     name: "WhatsApp",

@@ -25,3 +25,11 @@ export type SocialObjects = {
   active: boolean;
   linkTitle: string;
 }[];
+
+export type Project = {
+  title: string;
+  description: string;
+  link: string;
+  image: string;
+  tags: string[];
+};

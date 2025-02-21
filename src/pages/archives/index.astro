@@ -31,9 +31,9 @@ const MonthMap: Record<string, string> = {
 };
 ---
 
-<Layout title={`Archives | ${SITE.title}`}>
+<Layout title={`存档 | ${SITE.title}`}>
   <Header activeNav="archives" />
-  <Main pageTitle="Archives" pageDesc="All the articles I've archived.">
+  <Main pageTitle="存档" pageDesc="所有存档的文章.">
     {
       Object.entries(
         getPostsByGroupCondition(posts, post =>

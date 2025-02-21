@@ -23,7 +23,7 @@ const socialCount = SOCIALS.filter(social => social.active).length;
   <Header />
   <main id="main-content">
     <section id="hero">
-      <h1>Mingalaba</h1>
+      <h1>道阻且长，行则将至</h1>
       <a
         target="_blank"
         href="/rss.xml"
@@ -42,25 +42,30 @@ const socialCount = SOCIALS.filter(social => social.active).length;
       </a>
 
       <p>
-        AstroPaper is a minimal, responsive, accessible and SEO-friendly Astro
-        blog theme. This theme follows best practices and provides accessibility
-        out of the box. Light and dark mode are supported by default. Moreover,
-        additional color schemes can also be configured.
+        没有「三十天从零到百万用户」的造神神话，只有真实生长着的产品年轮，开发者的修行不在禅堂，
+        而在每个commit的注释里，在持续集成失败的红色警告中，在用户说「这个功能真贴心」的瞬间。
       </p>
       <p>
-        Read the blog posts or check
+        当我们学会与未知共舞，把焦虑兑换成耐心，让野望沉淀为专注——那些看似遥不可及的山巅，终将成为脚下的丘陵.
+      </p>
+      <p>
+        愿以十年磨一剑的笨拙，换代码世界的惊鸿一瞥。前路或有风雪载途，但行过的每一步，都是对终点的重新定义，
+        莫道前路无知己，天下谁人不识君。
+      </p>
+      <p>
+        希望你在这里能找到一些有价值的内容，也希望你能在这里找到一些志同道合的朋友：
         <LinkButton
           className="underline decoration-dashed underline-offset-4 hover:text-skin-accent"
-          href="https://github.com/satnaing/astro-paper#readme"
+          href="https://github.com/coolbat/coolbatbolg"
         >
-          README
-        </LinkButton> for more info.
+          我的GitHub
+        </LinkButton> 
       </p>
       {
         // only display if at least one social link is enabled
         socialCount > 0 && (
           <div class="social-wrapper">
-            <div class="social-links">Social Links:</div>
+            <div class="social-links">关注我的社交媒体:</div>
             <Socials />
           </div>
         )
@@ -73,7 +78,7 @@ const socialCount = SOCIALS.filter(social => social.active).length;
       featuredPosts.length > 0 && (
         <>
           <section id="featured">
-            <h2>Featured</h2>
+            <h2>精选文章</h2>
             <ul>
               {featuredPosts.map(({ data, slug }) => (
                 <Card
@@ -92,7 +97,7 @@ const socialCount = SOCIALS.filter(social => social.active).length;
     {
       recentPosts.length > 0 && (
         <section id="recent-posts">
-          <h2>Recent Posts</h2>
+          <h2>最近的文章</h2>
           <ul>
             {recentPosts.map(
               ({ data, slug }, index) =>
@@ -111,7 +116,7 @@ const socialCount = SOCIALS.filter(social => social.active).length;
 
     <div class="all-posts-btn-wrapper">
       <LinkButton href="/posts/">
-        All Posts
+        所有文章
         <svg xmlns="http://www.w3.org/2000/svg"
           ><path
             d="m11.293 17.293 1.414 1.414L19.414 12l-6.707-6.707-1.414 1.414L15.586 11H6v2h9.586z"
