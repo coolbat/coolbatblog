@@ -1,6 +1,103 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+# 项目修改记录
+
+## 2024-02-21 添加项目展示功能
+
+### 1. 添加新的类型定义
+typescript
+// src/types.ts
+export type Project = {
+title: string;
+description: string;
+link: string;
+image: string;
+tags: string[];
+};
+
+### 2. 创建项目数据文件
+
+```typescript
+// src/data/projects.ts
+import type { Project } from "../types.js";
+
+export const PROJECTS: Project[] = [
+  {
+    title: "Corgi-AI: Create anything with AI",
+    description: "...",
+    link: "https://your-project-link.com",
+    image: "/projects/corgi-ai.png",
+    tags: ["Svelte", "TypeScript", "PostgreSQL", "Docker", "Drizzle"]
+  },
+  // ...
+];
+```
+
+### 3. 创建项目卡片组件
+
+```astro:README.md
+// src/components/ProjectCard.astro
+---
+import type { Project } from "../types.js";
+
+export interface Props {
+  project: Project;
+}
+---
+// ... 组件代码
+```
+
+### 4. 创建项目列表页面
+```astro
+// src/pages/projects.astro
+---
+import { PROJECTS } from "../data/projects.js";
+// ... 其他导入
+---
+// ... 页面代码
+```
+
+### 5. 更新导航菜单
+```astro
+// src/components/Header.astro
+export interface Props {
+  activeNav?: "posts" | "archives" | "tags" | "about" | "search" | "projects";
+}
+// ... 添加项目导航链接
+```
+
+### 6. TypeScript 配置更新
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  }
+}
+```
+
+### 7. 依赖更新
+```json
+// package.json
+{
+  "devDependencies": {
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^19.0.4"
+  }
+}
+```
+
+### 注意事项
+- 所有相对导入路径需要添加 `.js` 扩展名
+- 使用相对路径替代 `@` 别名导入
+- 添加实际的项目数据到 projects.ts
+- 将项目截图放到 public/projects/ 目录
+- 更新项目链接到实际地址
+```
 
 ## v4.8.0 (2025-02-08)
 
