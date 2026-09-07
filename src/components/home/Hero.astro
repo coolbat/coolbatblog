@@ -1,0 +1,66 @@
+---
+import { HOME } from "../../data/home";
+import StarMap from "./StarMap.astro";
+import Icon from "../Icon.astro";
+---
+
+<section class="home-hero" aria-labelledby="home-title">
+  <div class="hero-landscape" aria-hidden="true">
+    <picture
+      ><source
+        media="(max-width: 767px)"
+        srcset="/home/mountains-mobile.webp"
+      /><img
+        src="/home/mountains-desktop.webp"
+        width="1920"
+        height="713"
+        alt=""
+        fetchpriority="high"
+      /></picture
+    >
+  </div>
+  <div class="hero-copy">
+    <p class="hero-eyebrow">
+      {HOME.hero.eyebrow}<br /><span>技术、人文，皆是同一片星空</span>
+    </p>
+    <h1 id="home-title">
+      <span lang="en">Coolbat</span><span class="title-dot"> · </span><span
+        class="title-chinese">观星造物</span
+      >
+    </h1>
+    <p class="hero-description">{HOME.hero.introduction}</p>
+    <p class="hero-english" lang="en">{HOME.hero.englishIntroduction}</p>
+    <a class="explore-button" href="#featured-works" data-explore
+      >探索我的作品<Icon name="arrow" /></a
+    >
+  </div>
+  <div class="hero-sky"><StarMap /></div>
+  <div class="hero-poem" aria-hidden="true">
+    <div class="poem-lines">
+      <span>星汉灿烂</span><span>而我仍在路上</span>
+    </div><i>观星</i>
+  </div>
+  <div class="sky-caption" lang="en" aria-hidden="true">
+    Same stars<br />Different questions
+  </div>
+  <button
+    class="motion-button"
+    data-motion-toggle
+    aria-label="暂停星光"
+    aria-pressed="false"
+    type="button"
+    ><Icon name="pause" /><span data-motion-label>暂停星光</span></button
+  >
+</section>
+<script>
+  document.addEventListener("click", event => {
+    if (
+      !(event.target instanceof Element) ||
+      !event.target.closest("[data-explore]")
+    )
+      return;
+    document
+      .querySelector<HTMLElement>("#featured-works")
+      ?.focus({ preventScroll: true });
+  });
+</script>

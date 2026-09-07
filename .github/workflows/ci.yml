@@ -13,11 +13,11 @@ jobs:
   build:
     name: Code standards & build
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 8
 
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [22.x]
 
     steps:
       - name: "☁️ Checkout repository"
@@ -35,8 +35,17 @@ jobs:
       - name: "🔎 Lint code"
         run: npm run lint
 
+      - name: "Type check"
+        run: npm run check
+
       - name: "📝 Checking code format"
         run: npm run format:check
 
       - name: "🚀 Build the project"
         run: npm run build
+
+      - name: "Install browser"
+        run: npx playwright install --with-deps chromium
+
+      - name: "Browser regression"
+        run: npx playwright test

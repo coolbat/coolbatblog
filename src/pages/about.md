@@ -1,36 +1,21 @@
 ---
 layout: ../layouts/AboutLayout.astro
-title: "关于"
+title: "关于 Coolbat"
+description: "独立开发者 Coolbat，记录 AI、产品、网站开发与沿途思考。"
 ---
 
-AstroPaper is a minimal, responsive and SEO-friendly Astro blog theme. I designed and crafted this based on [my personal blog](https://satnaing.dev/blog).
+我是 Coolbat，一名独立开发者。
 
-This theme is aimed to be accessible out of the box. Light and dark mode are supported by
-default and additional color schemes can also be configured.
+我关注 AI、网站与应用开发，也关心技术如何走进日常生活。这个站点用来收集作品，记录开发中的尝试，以及那些尚未想明白的问题。
 
-This theme is self-documented \_ which means articles/posts in this theme can also be considered as documentations. So, see the documentation for more info.
+## 观星造物
 
-<div>
-  <img src="/assets/dev.svg" class="sm:w-1/2 mx-auto" alt="coding dev illustration">
-</div>
+观星，是保持好奇，寻找更远的方向。造物，是把一个想法慢慢做成可以使用的东西。
 
-## Tech Stack
+我喜欢在技术与人文之间来回走动：理解新的工具，也寻找自己的表达。这里会留下实践、思考和不断修正的过程。
 
-This theme is written in vanilla JavaScript (+ TypeScript for type checking) and a little bit of ReactJS for some interactions. TailwindCSS is used for styling; and Markdown is used for blog contents.
+## 一点一滴，持续探索
 
-## Features
+这个站点也是一件持续打磨的作品。你可以从[作品](/projects/)看到实践，从[写作](/posts/)了解思考，或通过 [RSS](/rss.xml) 关注新的记录。
 
-Here are certain features of this site.
-
-- fully responsive and accessible
-- SEO-friendly
-- light & dark mode
-- fuzzy search
-- super fast performance
-- draft posts
-- pagination
-- sitemap & rss feed
-- highly customizable
-
-If you like this theme, you can star/contribute to the [repo](https://github.com/satnaing/astro-paper).  
-Or you can even give any feedback via my [email](mailto:contact@satnaing.dev).
+道阻且长，行则将至。

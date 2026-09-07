@@ -4,9 +4,9 @@ export const SITE: Site = {
   website: "https://coolbat.xyz/", // replace this with your deployed domain
   author: "Coolbat",
   profile: "https://coolbat.xyz/",
-  desc: "About AI, website, iOS app independent development, SEO, my personal experience sharing.",
-  title: "Coolbat",
-  ogImage: "coolbat-og.jpg",
+  desc: "我是 Coolbat，一名独立开发者。探索 AI、交互与文化，分享作品、开发实践与沿途思考。",
+  title: "Coolbat · 观星造物",
+  ogImage: "og.png",
   lightAndDarkMode: true,
   postPerIndex: 5,
   postPerPage: 5,
@@ -20,8 +20,8 @@ export const SITE: Site = {
 };
 
 export const LOCALE = {
-  lang: "en", // html lang code. Set this empty and default will be "en"
-  langTag: ["en-EN"], // BCP 47 Language Tags. Set this empty [] to use the environment default
+  lang: "zh-CN",
+  langTag: ["zh-CN"],
 } as const;
 
 export const LOGO_IMAGE = {
@@ -34,8 +34,8 @@ export const LOGO_IMAGE = {
 export const SOCIALS: SocialObjects = [
   {
     name: "Github",
-    href: "https://github.com/coolbat/coolbatbolg",
-    linkTitle: ` ${SITE.title} on Github`,
+    href: "https://github.com/coolbat",
+    linkTitle: "Coolbat 的 GitHub 主页",
     active: true,
   },
   {
@@ -65,7 +65,7 @@ export const SOCIALS: SocialObjects = [
   {
     name: "X",
     href: "https://x.com/coolbat1999",
-    linkTitle: `${SITE.title} on X`,
+    linkTitle: "Coolbat 的 X 主页",
     active: true,
   },
   {
@@ -153,3 +153,18 @@ export const SOCIALS: SocialObjects = [
     active: false,
   },
 ];
+
+export const CONTACTS = [
+  {
+    name: "GitHub",
+    handle: "@coolbat",
+    href: SOCIALS.find(social => social.name === "Github")!.href,
+    description: "代码、工具与开源实验",
+  },
+  {
+    name: "X",
+    handle: "@coolbat1999",
+    href: SOCIALS.find(social => social.name === "X")!.href,
+    description: "日常分享与沿途思考",
+  },
+] as const;

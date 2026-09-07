@@ -1,0 +1,52 @@
+---
+interface Props {
+  title: string;
+  english: string;
+  description: string;
+  note?: string;
+}
+const { title, english, description, note } = Astro.props;
+---
+
+<header class="page-intro">
+  <div class="page-intro-copy">
+    <p class="eyebrow">
+      <span class="small-star" aria-hidden="true">✧</span><span lang="en"
+        >{english}</span
+      >
+    </p>
+    <h1>{title}</h1>
+    <p class="page-intro-description">{description}</p>
+    {note && <p class="page-intro-note">{note}</p>}
+  </div>
+  <svg
+    class="intro-orbit"
+    data-illustration
+    viewBox="0 0 320 240"
+    aria-hidden="true"
+    fill="none"
+  >
+    <g stroke="currentColor" stroke-width=".7">
+      <circle cx="172" cy="112" r="94"></circle><circle cx="172" cy="112" r="68"
+      ></circle><circle cx="172" cy="112" r="31"></circle>
+      <ellipse
+        cx="172"
+        cy="112"
+        rx="119"
+        ry="46"
+        transform="rotate(-36 172 112)"></ellipse>
+      <path d="M44 112h256M172 1v222M82 196 261 27" opacity=".5"></path>
+      <circle cx="172" cy="112" r="114" stroke-dasharray="1 6" opacity=".5"
+      ></circle>
+    </g>
+    <g fill="currentColor"
+      ><circle cx="172" cy="112" r="3.6"></circle><circle
+        cx="226"
+        cy="31"
+        r="2.5"></circle><circle cx="101" cy="174" r="2.5"></circle><circle
+        cx="252"
+        cy="137"
+        r="1.5"></circle></g
+    >
+  </svg>
+</header>

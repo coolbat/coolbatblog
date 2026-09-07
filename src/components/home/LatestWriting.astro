@@ -1,0 +1,57 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { formatHomeDate } from "../../utils/getHomeContent";
+import SectionHeading from "./SectionHeading.astro";
+import Icon from "../Icon.astro";
+interface Props {
+  posts: CollectionEntry<"blog">[];
+}
+const { posts } = Astro.props;
+---
+
+<section class="home-section latest-writing" aria-labelledby="writing-title">
+  <SectionHeading
+    title="最近写作"
+    english="Latest writing"
+    href={posts.length ? "/posts/" : undefined}
+    linkLabel="全部文章"
+    id="writing-title"
+  />
+  {
+    posts.length ? (
+      <ul class="writing-list">
+        {posts.map(post => (
+          <li>
+            <a href={`/posts/${post.slug}/`}>
+              <div>
+                <h3>{post.data.title}</h3>
+                <p>{post.data.description}</p>
+              </div>
+              <time datetime={post.data.pubDatetime.toISOString()}>
+                {formatHomeDate(post.data.pubDatetime)}
+              </time>
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <div class="writing-empty">
+        <>
+          <span class="writing-mark" aria-hidden="true">
+            记
+          </span>
+          <p class="empty-title">思考，还在路上。</p>
+          <p>
+            关于创造、技术与日常的文字，
+            <br />
+            会慢慢写在这里。
+          </p>
+          <a href="/rss.xml" data-astro-reload>
+            通过 RSS 关注更新
+            <Icon name="arrow" />
+          </a>
+        </>
+      </div>
+    )
+  }
+</section>

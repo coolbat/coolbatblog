@@ -1,6 +1,7 @@
 ---
 import { SITE } from "@config";
-import Breadcrumbs from "@components/Breadcrumbs.astro";
+import PageIntro from "@components/PageIntro.astro";
+import ContactLinks from "@components/ContactLinks.astro";
 import Footer from "@components/Footer.astro";
 import Header from "@components/Header.astro";
 import Layout from "./Layout.astro";
@@ -15,13 +16,39 @@ export interface Props {
 const { frontmatter } = Astro.props;
 ---
 
-<Layout title={`${frontmatter.title} | ${SITE.title}`}>
+<Layout
+  title={`${frontmatter.title} | ${SITE.title}`}
+  description={frontmatter.description}
+>
   <Header activeNav="about" />
-  <Breadcrumbs />
-  <main id="main-content">
-    <section id="about" class="prose mb-28 max-w-3xl prose-img:border-0">
-      <h1 class="text-2xl tracking-wider sm:text-3xl">{frontmatter.title}</h1>
-      <slot />
+  <main id="main-content" class="interior-shell about-page" tabindex="-1">
+    <PageIntro
+      title={frontmatter.title}
+      english="A little about me"
+      description="在技术与人文之间，保持好奇，持续创造。"
+    />
+    <div class="about-layout">
+      <aside class="about-signature">
+        <span class="signature-seal" aria-hidden="true">观星<br />造物</span><p
+          class="signature-name"
+          lang="en"
+        >
+          Coolbat
+        </p><p>独立开发者</p><span class="signature-line" aria-hidden="true"
+        ></span><p class="signature-quote">
+          观星，所以知远。<br />造物，所以致用。
+        </p>
+      </aside>
+      <article id="about" class="reading-prose about-prose">
+        <slot />
+      </article>
+    </div>
+    <section class="about-contact" aria-labelledby="about-contact-title">
+      <div class="collection-heading">
+        <h2 id="about-contact-title">在这里找到我</h2><span
+          class="collection-rule"
+          aria-hidden="true"></span><span lang="en">Elsewhere</span>
+      </div><ContactLinks />
     </section>
   </main>
   <Footer />

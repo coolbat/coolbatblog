@@ -1,76 +1,77 @@
-const primaryColorScheme = ""; // "light" | "dark"
+(() => {
+  if (window.__coolbatThemeReady) return;
+  window.__coolbatThemeReady = true;
+  document.documentElement.dataset.js = "true";
+  let theme = "dark";
+  let motionPaused = false;
+  try {
+    const saved = localStorage.getItem("theme");
+    if (saved === "light" || saved === "dark") theme = saved;
+    motionPaused = localStorage.getItem("motion-paused") === "true";
+  } catch {
+    /* The controls also work when storage is unavailable. */
+  }
 
-// Get theme data from local storage
-const currentTheme = localStorage.getItem("theme");
-
-function getPreferTheme() {
-  // return theme value in local storage if it is set
-  if (currentTheme) return currentTheme;
-
-  // return primary color scheme if it is set
-  if (primaryColorScheme) return primaryColorScheme;
-
-  // return user device's prefer color scheme
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-}
-
-let themeValue = getPreferTheme();
-
-function setPreference() {
-  localStorage.setItem("theme", themeValue);
-  reflectPreference();
-}
-
-function reflectPreference() {
-  document.firstElementChild.setAttribute("data-theme", themeValue);
-
-  document.querySelector("#theme-btn")?.setAttribute("aria-label", themeValue);
-
-  // Get a reference to the body element
-  const body = document.body;
-
-  // Check if the body element exists before using getComputedStyle
-  if (body) {
-    // Get the computed styles for the body element
-    const computedStyles = window.getComputedStyle(body);
-
-    // Get the background color property
-    const bgColor = computedStyles.backgroundColor;
-
-    // Set the background color in <meta theme-color ... />
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  function reflect(root = document.documentElement) {
+    root.dataset.theme = theme;
+    root.dataset.js = "true";
+    root.dataset.motionPaused = String(motionPaused || reducedMotion.matches);
+    const themeButton = document.querySelector("#theme-btn");
+    const label = theme === "dark" ? "切换到浅色" : "切换到深色";
+    themeButton?.setAttribute("aria-label", label);
+    themeButton?.setAttribute("title", label);
+    // 主题底色与 base.css 的 --color-fill、Layout.astro 的 theme-color 保持一致
     document
-      .querySelector("meta[name='theme-color']")
-      ?.setAttribute("content", bgColor);
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", theme === "dark" ? "#080f14" : "#f4f0e7");
+    const motionButton = document.querySelector("[data-motion-toggle]");
+    if (motionButton) {
+      motionButton.disabled = reducedMotion.matches;
+      motionButton.setAttribute(
+        "aria-pressed",
+        String(motionPaused || reducedMotion.matches)
+      );
+      const motionLabel = reducedMotion.matches
+        ? "已减少动态效果"
+        : motionPaused
+          ? "播放星光"
+          : "暂停星光";
+      motionButton.setAttribute("aria-label", motionLabel);
+      motionButton.querySelector("[data-motion-label]").textContent =
+        motionLabel;
+    }
   }
-}
-
-// set early so no page flashes / CSS is made aware
-reflectPreference();
-
-window.onload = () => {
-  function setThemeFeature() {
-    // set on load so screen readers can get the latest value on the button
-    reflectPreference();
-
-    // now this script can find and listen for clicks on the control
-    document.querySelector("#theme-btn")?.addEventListener("click", () => {
-      themeValue = themeValue === "light" ? "dark" : "light";
-      setPreference();
-    });
-  }
-
-  setThemeFeature();
-
-  // Runs on view transitions navigation
-  document.addEventListener("astro:after-swap", setThemeFeature);
-};
-
-// sync with system changes
-window
-  .matchMedia("(prefers-color-scheme: dark)")
-  .addEventListener("change", ({ matches: isDark }) => {
-    themeValue = isDark ? "dark" : "light";
-    setPreference();
+  reflect();
+  document.addEventListener("DOMContentLoaded", () => reflect());
+  document.addEventListener("astro:before-swap", event =>
+    reflect(event.newDocument.documentElement)
+  );
+  document.addEventListener("astro:after-swap", () => reflect());
+  document.addEventListener("astro:page-load", () => reflect());
+  reducedMotion.addEventListener("change", () => reflect());
+  document.addEventListener("click", event => {
+    if (!(event.target instanceof Element)) return;
+    if (event.target.closest("#theme-btn")) {
+      theme = theme === "dark" ? "light" : "dark";
+      try {
+        localStorage.setItem("theme", theme);
+      } catch {
+        /* Keep the in-memory choice. */
+      }
+      reflect();
+    }
+    if (
+      event.target.closest("[data-motion-toggle]") &&
+      !reducedMotion.matches
+    ) {
+      motionPaused = !motionPaused;
+      try {
+        localStorage.setItem("motion-paused", String(motionPaused));
+      } catch {
+        /* Keep the in-memory choice. */
+      }
+      reflect();
+    }
   });
+})();

@@ -1,0 +1,32 @@
+---
+interface Props {
+  name: "arrow" | "search" | "moon" | "sun" | "menu" | "pause" | "play";
+}
+const { name } = Astro.props;
+const paths = {
+  arrow: "M4 12h16m-6-6 6 6-6 6",
+  search: "m20 20-5-5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0",
+  moon: "M20 14a8 8 0 0 1-10-10A8.5 8.5 0 1 0 20 14Z",
+  sun: "M12 3V1m0 22v-2M3 12H1m22 0h-2M5.6 5.6 4.2 4.2m15.6 15.6-1.4-1.4M5.6 18.4l-1.4 1.4M19.8 4.2l-1.4 1.4M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0",
+  menu: "M4 8h16M4 16h16",
+  pause: "M9 6v12m6-12v12",
+  play: "m9 5 10 7-10 7Z",
+};
+---
+
+<svg class="site-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+  <path d={paths[name]}></path>
+</svg>
+
+<style>
+  .site-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>

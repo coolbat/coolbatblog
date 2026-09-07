@@ -1,0 +1,28 @@
+---
+import { CONTACTS } from "@config";
+import Icon from "./Icon.astro";
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<div class:list={["contact-links", { compact }]}>
+  {
+    CONTACTS.map(contact => (
+      <a href={contact.href} target="_blank" rel="noopener noreferrer">
+        <div>
+          <>
+            <span class="contact-platform">{contact.name}</span>
+            <span class="contact-handle">{contact.handle}</span>
+            <p>{contact.description}</p>
+          </>
+        </div>
+        <>
+          <Icon name="arrow" />
+          <span class="sr-only">（在新标签页打开）</span>
+        </>
+      </a>
+    ))
+  }
+</div>

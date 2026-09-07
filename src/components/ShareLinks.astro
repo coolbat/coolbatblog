@@ -1,66 +1,51 @@
 ---
-import LinkButton from "./LinkButton.astro";
-import socialIcons from "@assets/socialIcons";
-
-const URL = Astro.url;
-
-const shareLinks = [
+interface Props {
+  url: string;
+  title: string;
+}
+const { url, title } = Astro.props;
+const links = [
   {
-    name: "WhatsApp",
-    href: "https://wa.me/?text=",
-    linkTitle: `Share this post via WhatsApp`,
+    label: "X",
+    href: `https://x.com/intent/post?${new URLSearchParams({ url, text: title })}`,
   },
   {
-    name: "Facebook",
-    href: "https://www.facebook.com/sharer.php?u=",
-    linkTitle: `Share this post on Facebook`,
+    label: "邮件",
+    href: `mailto:?${new URLSearchParams({ subject: title, body: url })}`,
   },
   {
-    name: "X",
-    href: "https://x.com/intent/post?url=",
-    linkTitle: `Share this post on X`,
+    label: "WhatsApp",
+    href: `https://wa.me/?${new URLSearchParams({ text: `${title} ${url}` })}`,
   },
   {
-    name: "Telegram",
-    href: "https://t.me/share/url?url=",
-    linkTitle: `Share this post via Telegram`,
+    label: "Facebook",
+    href: `https://www.facebook.com/sharer.php?${new URLSearchParams({ u: url })}`,
   },
   {
-    name: "Pinterest",
-    href: "https://pinterest.com/pin/create/button/?url=",
-    linkTitle: `Share this post on Pinterest`,
+    label: "Telegram",
+    href: `https://t.me/share/url?${new URLSearchParams({ url, text: title })}`,
   },
   {
-    name: "Mail",
-    href: "mailto:?subject=See%20this%20post&body=",
-    linkTitle: `Share this post via email`,
+    label: "Pinterest",
+    href: `https://pinterest.com/pin/create/button/?${new URLSearchParams({ url, description: title })}`,
   },
-] as const;
+];
 ---
 
-<div class={`social-icons`}>
-  <span class="italic">Share this post on:</span>
-  <div class="text-center">
-    {
-      shareLinks.map(social => (
-        <LinkButton
-          href={`${social.href + URL}`}
-          className="link-button"
-          title={social.linkTitle}
-        >
-          <Fragment set:html={socialIcons[social.name]} />
-          <span class="sr-only">{social.linkTitle}</span>
-        </LinkButton>
-      ))
-    }
-  </div>
+<div class="share-links">
+  <button type="button" data-copy-link={url}>复制链接</button>
+  <details class="share-menu">
+    <summary>分享文章 <span aria-hidden="true">↗</span></summary><nav
+      aria-label="分享文章"
+    >
+      {
+        links.map(link => (
+          <a href={link.href} target="_blank" rel="noopener noreferrer">
+            {link.label}
+            <span class="sr-only">（在新标签页打开）</span>
+          </a>
+        ))
+      }
+    </nav>
+  </details>
 </div>
-
-<style>
-  .social-icons {
-    @apply flex flex-col flex-wrap items-center justify-center gap-1 sm:items-start;
-  }
-  .link-button {
-    @apply scale-90 p-2 hover:rotate-6 sm:p-1;
-  }
-</style>

@@ -1,0 +1,47 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { formatHomeDate } from "@utils/getHomeContent";
+import { slugifyStr } from "@utils/slugify";
+import Icon from "./Icon.astro";
+interface Props {
+  posts: CollectionEntry<"blog">[];
+}
+const { posts } = Astro.props;
+---
+
+<ol class="post-list">
+  {
+    posts.map(({ data, slug }) => {
+      const date = data.modDatetime ?? data.pubDatetime;
+      return (
+        <li>
+          <a class="post-entry" href={`/posts/${slug}/`}>
+            <div class="entry-date">
+              <>
+                <span>{data.modDatetime ? "更新于" : "发布于"}</span>
+                <time datetime={date.toISOString()}>
+                  {formatHomeDate(date)}
+                </time>
+              </>
+            </div>
+            <div class="entry-copy">
+              <>
+                <p class="entry-author">{data.author}</p>
+                <h2 transition:name={slugifyStr(data.title)}>{data.title}</h2>
+                <p class="entry-description">{data.description}</p>
+                <div class="entry-tags">
+                  {data.tags.map(tag => (
+                    <span># {tag}</span>
+                  ))}
+                </div>
+              </>
+            </div>
+            <span class="entry-arrow">
+              <Icon name="arrow" />
+            </span>
+          </a>
+        </li>
+      );
+    })
+  }
+</ol>

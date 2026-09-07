@@ -1,45 +1,111 @@
 ---
-import Hr from "./Hr.astro";
-import Socials from "./Socials.astro";
-
-const currentYear = new Date().getFullYear();
-
-export interface Props {
+import { SOCIALS, SITE } from "@config";
+interface Props {
   noMarginTop?: boolean;
+  wide?: boolean;
 }
-
-const { noMarginTop = false } = Astro.props;
+const { noMarginTop = false, wide = true } = Astro.props;
 ---
 
-<footer class={`${noMarginTop ? "" : "mt-auto"}`}>
-  <Hr noPadding />
-  <div class="footer-wrapper">
-    <Socials centered />
-    <div class="copyright-wrapper">
-      <span>Copyright &#169; {currentYear}</span>
-      <span class="separator">&nbsp;|&nbsp;</span>
-      <span>All rights reserved.</span>
+<footer class:list={["site-footer", { wide, "push-bottom": !noMarginTop }]}>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="/">coolbat.xyz</a><span>独立开发 · 自由探索 · 长期创造</span>
     </div>
+    <nav aria-label="更多链接">
+      {
+        SOCIALS.filter(social => social.active).map(social => (
+          <a href={social.href} target="_blank" rel="noopener noreferrer">
+            {social.name === "Github" ? "GitHub" : social.name}
+          </a>
+        ))
+      }
+      <a href="/rss.xml" data-astro-reload>RSS</a><a href="/tags/">标签</a>
+      {SITE.showArchives && <a href="/archives/">归档</a>}
+    </nav>
+  </div>
+  <div class="footer-note">
+    <span>© {new Date().getFullYear()} Coolbat</span><span
+      >观星，所以知远；造物，所以致用。</span
+    >
   </div>
 </footer>
-
 <style>
-  footer {
-    @apply w-full;
+  .site-footer {
+    width: min(100% - 2rem, 48rem);
+    max-width: none;
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+    color: rgb(var(--muted));
+    font-size: 11px;
   }
-  .footer-wrapper {
-    @apply flex flex-col items-center justify-between py-6 sm:flex-row-reverse sm:py-4;
+  .site-footer.wide {
+    width: min(100% - 6rem, 85rem);
   }
-  .link-button {
-    @apply my-1 p-2 hover:rotate-6;
+  .push-bottom {
+    margin-top: auto;
   }
-  .link-button svg {
-    @apply scale-125;
+  .footer-inner,
+  .footer-note {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
   }
-  .copyright-wrapper {
-    @apply my-2 flex flex-col items-center whitespace-nowrap sm:flex-row;
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 28px;
   }
-  .separator {
-    @apply hidden sm:inline;
+  .footer-brand a {
+    color: rgb(var(--color-text-base));
+    font-family: var(--font-display);
+    font-size: 15px;
+  }
+  .footer-brand span {
+    letter-spacing: 0.15em;
+  }
+  nav {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+  }
+  a:hover {
+    color: rgb(var(--color-accent));
+  }
+  .footer-note {
+    margin-top: 12px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+  @media (max-width: 767px) {
+    .site-footer,
+    .site-footer.wide {
+      width: calc(100% - 40px);
+    }
+    .footer-inner {
+      flex-direction: column;
+      gap: 8px;
+    }
+    .footer-brand {
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    nav {
+      gap: 20px;
+    }
+    nav a {
+      min-height: 44px;
+    }
+    .footer-note {
+      line-height: 1.8;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
   }
 </style>

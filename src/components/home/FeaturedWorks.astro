@@ -1,0 +1,63 @@
+---
+import type { Project } from "../../types";
+import SectionHeading from "./SectionHeading.astro";
+import ProjectCard from "../ProjectCard.astro";
+interface Props {
+  projects: Project[];
+}
+const { projects } = Astro.props;
+---
+
+<section
+  id="featured-works"
+  class="home-section featured-works"
+  aria-labelledby="works-title"
+  tabindex="-1"
+>
+  <SectionHeading
+    title="精选作品"
+    english="Featured works"
+    href={projects.length ? "/projects/" : undefined}
+    linkLabel="全部作品"
+    id="works-title"
+  />
+  {
+    projects.length ? (
+      <div class="works-grid" data-count={projects.length}>
+        {projects.map(project => (
+          <ProjectCard project={project} />
+        ))}
+      </div>
+    ) : (
+      <div class="empty-works">
+        <>
+          <p>作品正在整理中。</p>
+          <span>把想法变成作品，也记录途中的发现。</span>
+        </>
+      </div>
+    )
+  }
+  {
+    projects.length === 1 && (
+      <div class="works-afterword">
+        <>
+          <span class="tiny-star" aria-hidden="true">
+            ✧
+          </span>
+          <p>
+            从一个念头，到一件作品。
+            <>
+              <br />
+              <span>慢慢探索，持续创造。</span>
+            </>
+          </p>
+          <span lang="en">
+            A small beginning.
+            <br />
+            An open horizon.
+          </span>
+        </>
+      </div>
+    )
+  }
+</section>

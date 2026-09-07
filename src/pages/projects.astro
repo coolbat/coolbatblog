@@ -1,20 +1,42 @@
 ---
 import { SITE } from "@config";
 import Layout from "@layouts/Layout.astro";
-import Main from "@layouts/Main.astro";
+import PageIntro from "@components/PageIntro.astro";
+import ContactLinks from "@components/ContactLinks.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import ProjectCard from "@components/ProjectCard.astro";
 import { PROJECTS } from "../data/projects.js";
-
 ---
 
-<Layout title={`项目 | ${SITE.title}`}>
+<Layout
+  title={`作品 | ${SITE.title}`}
+  description="Coolbat 的作品与实验：动态图解、交互收藏卡、视觉创作与开发工具。"
+>
   <Header activeNav="projects" />
-  <Main pageTitle="项目" pageDesc="这里展示了我构建的一些项目">
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+  <main id="main-content" class="interior-shell works-page" tabindex="-1">
+    <PageIntro
+      title="作品与实验"
+      english="Selected works"
+      description="把好奇变成可以使用的东西。"
+      note="从图解、交互到视觉表达，记录想法落地的过程。"
+    />
+    <div class="collection-heading">
+      <h2>全部作品</h2><span class="collection-rule" aria-hidden="true"
+      ></span><span>{String(PROJECTS.length).padStart(2, "0")} 个项目</span>
+    </div>
+    <div class="works-catalog">
       {PROJECTS.map(project => <ProjectCard project={project} />)}
     </div>
-  </Main>
+    <section class="interior-contact" aria-labelledby="works-contact-title">
+      <div>
+        <p class="eyebrow" lang="en">Keep in touch</p><h2
+          id="works-contact-title"
+        >
+          想法，因交流而生长。
+        </h2><p>欢迎聊聊代码、工具，以及下一件想做的作品。</p>
+      </div><ContactLinks compact />
+    </section>
+  </main>
   <Footer />
-</Layout> 
+</Layout>

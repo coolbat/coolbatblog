@@ -1,0 +1,26 @@
+---
+import Icon from "../Icon.astro";
+interface Props {
+  title: string;
+  english: string;
+  href?: string;
+  linkLabel?: string;
+  id?: string;
+}
+const { title, english, href, linkLabel = "更多", id } = Astro.props;
+---
+
+<div class="section-heading">
+  <h2 id={id}>{title}</h2><span class="section-english" lang="en"
+    >{english}</span
+  >
+  <span class="section-rule" aria-hidden="true"></span>
+  {
+    href && (
+      <a href={href}>
+        {linkLabel}
+        <Icon name="arrow" />
+      </a>
+    )
+  }
+</div>

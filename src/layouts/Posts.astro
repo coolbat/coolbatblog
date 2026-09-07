@@ -1,10 +1,13 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import Main from "@layouts/Main.astro";
+import PageIntro from "@components/PageIntro.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import Pagination from "@components/Pagination.astro";
-import Card from "@components/Card";
+import PostList from "@components/PostList.astro";
+import Icon from "@components/Icon.astro";
+import { getCollection } from "astro:content";
+import getUniqueTags from "@utils/getUniqueTags";
 import { SITE } from "@config";
 import type { Page } from "astro";
 import type { CollectionEntry } from "astro:content";
@@ -14,21 +17,60 @@ export interface Props {
 }
 
 const { page } = Astro.props;
+const tags = getUniqueTags(await getCollection("blog"));
 ---
 
-<Layout title={`文章 | ${SITE.title}`}>
+<Layout
+  title={`写作 | ${SITE.title}`}
+  description="关于创造、技术与日常的文字。收录开发实践、工具笔记与沿途思考。"
+>
   <Header activeNav="posts" />
-  <Main pageTitle="文章" pageDesc="所有文章汇总.">
-    <ul>
-      {
-        page.data.map(({ data, slug }) => (
-          <Card href={`/posts/${slug}/`} frontmatter={data} />
-        ))
-      }
-    </ul>
-  </Main>
+  <main id="main-content" class="interior-shell writing-page" tabindex="-1">
+    <PageIntro
+      title="写作"
+      english="Notes & reflections"
+      description="把沿途的思考，慢慢写下来。"
+      note="关于创造、技术与日常，也关于那些尚未想明白的问题。"
+    />
+    <div class="writing-toolbar">
+      <p>全部文章 <span>{String(page.total).padStart(2, "0")}</span></p><nav
+        aria-label="文章索引"
+      >
+        <a href="/search/"><Icon name="search" />搜索</a><a href="/archives/"
+          >归档</a
+        ><a href="/rss.xml" data-astro-reload>RSS <Icon name="arrow" /></a>
+      </nav>
+    </div>
+    <div class="writing-layout">
+      <div class="writing-entries">
+        {
+          page.data.length ? (
+            <PostList posts={page.data} />
+          ) : (
+            <p class="interior-empty">
+              思考，还在路上。新的文字会慢慢写在这里。
+            </p>
+          )
+        }<Pagination {page} />
+      </div>
+      <aside class="writing-aside">
+        <p class="eyebrow" lang="en">Along the way</p><p class="aside-quote">
+          观察，实践，<br />再记录。
+        </p><p>
+          文字是探索留下的轨迹。<br />愿每一次记录，都让想法更清晰一点。
+        </p><div class="writing-topics">
+          <h2>沿着主题阅读</h2>{
+            tags.map(({ tag, tagName }) => (
+              <a href={`/tags/${tag}/`}>
+                # {tagName}
+                <Icon name="arrow" />
+              </a>
+            ))
+          }<a href="/tags/">全部标签<Icon name="arrow" /></a>
+        </div>
+      </aside>
+    </div>
+  </main>
 
-  <Pagination {page} />
-
-  <Footer noMarginTop={page.lastPage > 1} />
+  <Footer />
 </Layout>

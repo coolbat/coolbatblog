@@ -12,13 +12,19 @@ interface ArrayTitleProp {
   pageDesc?: string;
 }
 
-export type Props = StringTitleProp | ArrayTitleProp;
+export type Props = (StringTitleProp | ArrayTitleProp) & {
+  width?: "reading" | "wide";
+};
 
 const { props } = Astro;
 ---
 
 <Breadcrumbs />
-<main id="main-content">
+<main
+  id="main-content"
+  tabindex="-1"
+  class:list={{ "wide-main": props.width === "wide" }}
+>
   {
     "titleTransition" in props ? (
       <h1>
@@ -41,6 +47,10 @@ const { props } = Astro;
   }
   #main-content h1 {
     @apply text-2xl font-semibold sm:text-3xl;
+  }
+  #main-content.wide-main {
+    width: min(100% - 2rem, 85rem);
+    max-width: none;
   }
   #main-content p {
     @apply mb-6 mt-2 italic;

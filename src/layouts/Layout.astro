@@ -1,6 +1,7 @@
 ---
-import { LOCALE, SITE } from "@config";
+import { CONTACTS, LOCALE, SITE } from "@config";
 import "@styles/base.css";
+import "@styles/interior.css";
 import { ViewTransitions } from "astro:transitions";
 
 const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
@@ -15,6 +16,7 @@ export interface Props {
   pubDatetime?: Date;
   modDatetime?: Date | null;
   scrollSmooth?: boolean;
+  presentation?: "reading" | "showcase";
 }
 
 const {
@@ -27,6 +29,7 @@ const {
   pubDatetime,
   modDatetime,
   scrollSmooth = false,
+  presentation = "reading",
 } = Astro.props;
 
 const socialImageURL = new URL(
@@ -34,27 +37,58 @@ const socialImageURL = new URL(
   Astro.url.origin
 ).href;
 
-const structuredData = {
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  headline: `${title}`,
-  image: `${socialImageURL}`,
-  datePublished: `${pubDatetime?.toISOString()}`,
-  ...(modDatetime && { dateModified: modDatetime.toISOString() }),
-  author: [
-    {
-      "@type": "Person",
-      name: `${author}`,
-      url: `${profile}`,
-    },
-  ],
-};
+const structuredData = pubDatetime
+  ? {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: `${title}`,
+      image: `${socialImageURL}`,
+      datePublished: `${pubDatetime?.toISOString()}`,
+      ...(modDatetime && { dateModified: modDatetime.toISOString() }),
+      author: [
+        {
+          "@type": "Person",
+          name: `${author}`,
+          ...(author === SITE.author
+            ? { url: profile, sameAs: CONTACTS.map(contact => contact.href) }
+            : {}),
+        },
+      ],
+    }
+  : {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": `${SITE.website}#website`,
+          url: SITE.website,
+          name: SITE.title,
+          description: SITE.desc,
+          inLanguage: LOCALE.lang,
+        },
+        {
+          "@type": "Person",
+          "@id": `${SITE.website}#person`,
+          name: SITE.author,
+          url: SITE.profile,
+          sameAs: CONTACTS.map(contact => contact.href),
+        },
+        {
+          "@type": "WebPage",
+          url: canonicalURL,
+          name: title,
+          description,
+          isPartOf: { "@id": `${SITE.website}#website` },
+          about: { "@id": `${SITE.website}#person` },
+        },
+      ],
+    };
 ---
 
 <!doctype html>
 <html
   lang=`${LOCALE.lang ?? "en"}`
-  class={`${scrollSmooth && "scroll-smooth"}`}
+  class:list={{ "scroll-smooth": scrollSmooth }}
 >
   <head>
     <meta charset="UTF-8" />
@@ -75,6 +109,8 @@ const structuredData = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={socialImageURL} />
+    <meta property="og:type" content={pubDatetime ? "article" : "website"} />
+    <meta property="og:locale" content="zh_CN" />
 
     <!-- Article Published/Modified time -->
     {
@@ -103,22 +139,29 @@ const structuredData = {
 
     <!-- Google JSON-LD Structured data -->
     <script
+      is:inline
       type="application/ld+json"
-      set:html={JSON.stringify(structuredData)}
+      set:html={JSON.stringify(structuredData).replaceAll("<", "\\u003c")}
     />
 
-    <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
       rel="preload"
-      as="style"
-      onload="this.onload=null; this.rel='stylesheet';"
+      href="/fonts/noto-serif-sc-display-0.woff2"
+      as="font"
+      type="font/woff2"
       crossorigin
     />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Coolbat RSS"
+      href="/rss.xml"
+    />
 
-    <meta name="theme-color" content="" />
+    {
+      /* 主题底色与 base.css 的 --color-fill、toggle-theme.js 中的 hex 保持一致 */
+    }
+    <meta name="theme-color" content="#080f14" />
 
     {
       // If PUBLIC_GOOGLE_SITE_VERIFICATION is set in the environment variable,
@@ -134,9 +177,9 @@ const structuredData = {
 
     <ViewTransitions />
 
-    <script is:inline src="/toggle-theme.js" async></script>
+    <script is:inline src="/toggle-theme.js"></script>
   </head>
-  <body>
+  <body data-presentation={presentation}>
     <slot />
   </body>
 </html>

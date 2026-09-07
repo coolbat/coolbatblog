@@ -1,0 +1,48 @@
+---
+import { HOME } from "../../data/home";
+import SectionHeading from "./SectionHeading.astro";
+import StarMap from "./StarMap.astro";
+---
+
+<section class="home-section current-orbit" aria-labelledby="orbit-title">
+  <SectionHeading title="当前轨道" english="/ Now" id="orbit-title" />
+  <div class="orbit-content">
+    <div class="mini-map"><StarMap compact id="current-map" /></div>
+    <ol class="orbit-list">
+      {
+        HOME.currentOrbit.items.map((item, index) => (
+          <li>
+            <>
+              <span class="orbit-number">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <div>
+                <>
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                </>
+              </div>
+            </>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+  <div class="orbit-caption">
+    <span>不同的轨道，同一个方向</span><span
+      class="section-rule"
+      aria-hidden="true"></span><span lang="en"
+      >Exploring · Building · Learning</span
+    >
+  </div>
+  {
+    HOME.currentOrbit.updatedAt && (
+      <p class="orbit-updated">
+        更新于{" "}
+        <time datetime={HOME.currentOrbit.updatedAt}>
+          {HOME.currentOrbit.updatedAt}
+        </time>
+      </p>
+    )
+  }
+</section>

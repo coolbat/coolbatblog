@@ -1,0 +1,178 @@
+---
+interface Props {
+  compact?: boolean;
+  id?: string;
+}
+const { compact = false, id = "hero-map" } = Astro.props;
+let seed = 31;
+const random = () => {
+  seed = (seed * 16807) % 2147483647;
+  return (seed - 1) / 2147483646;
+};
+const stars = Array.from({ length: compact ? 30 : 180 }, () => {
+  const angle = random() * Math.PI * 2;
+  const distance = Math.sqrt(random()) * 463;
+  return {
+    x: 500 + Math.cos(angle) * distance,
+    y: 500 + Math.sin(angle) * distance,
+    r: 0.7 + random() * 1.6,
+    opacity: 0.2 + random() * 0.65,
+  };
+});
+const constellations = [
+  "210,345 258,361 275,300 340,312 358,223 399,193 427,238",
+  "340,312 323,382 361,414 390,474 442,485",
+  "500,163 553,210 602,192 623,132 669,104",
+  "602,192 633,252 688,297 754,265 806,323",
+  "754,265 800,239 850,211",
+  "654,386 626,429 685,456 750,430 768,389 810,416",
+  "548,567 603,616 661,592 714,665 754,725 816,750",
+  "603,616 558,678 587,734 626,780 596,822",
+  "373,566 353,622 293,650 265,715 212,740",
+  "293,650 357,702 397,739 411,798 457,829",
+  "464,315 476,370 453,401 474,468",
+  "502,805 524,848 580,877",
+];
+const labels = [
+  { x: 42, y: 27, name: "紫微", detail: "天之中", side: "left" },
+  { x: 20, y: 33, name: "太白", detail: "金 · 启明", side: "left" },
+  { x: 81, y: 28, name: "北斗", detail: "行 · 方向", side: "right" },
+  { x: 91, y: 53, name: "东方苍龙", detail: "春 · 生发", side: "right" },
+  { x: 29, y: 74, name: "参宿", detail: "生 · 创造", side: "left" },
+  { x: 76, y: 76, name: "角宿", detail: "始 · 万物", side: "right" },
+];
+---
+
+<div class:list={["star-map", { compact }]} aria-hidden="true">
+  <svg data-illustration viewBox="0 0 1000 1000" fill="none" focusable="false">
+    <defs>
+      <radialGradient id={`${id}-glow`}
+        ><stop stop-color="#e8d2a6" stop-opacity=".65"></stop><stop
+          offset=".25"
+          stop-color="#b9a47b"
+          stop-opacity=".17"></stop><stop
+          offset="1"
+          stop-color="#b9a47b"
+          stop-opacity="0"></stop></radialGradient
+      >
+    </defs>
+    <g class="orbit-lines">
+      {
+        (compact
+          ? [220, 295, 365]
+          : [80, 166, 242, 326, 402, 443, 455, 473]
+        ).map((r, i) => (
+          <circle
+            cx="500"
+            cy="500"
+            r={r}
+            stroke-dasharray={i === 6 ? "1 6" : undefined}
+            opacity={i === 0 ? 0.45 : 0.7}
+          />
+        ))
+      }
+      <ellipse
+        cx="500"
+        cy="500"
+        rx={compact ? 400 : 458}
+        ry={compact ? 160 : 353}
+        transform="rotate(-54 500 500)"
+        opacity=".55"></ellipse>
+      <path d="M25 500H975M500 25V975" opacity=".4"></path>
+      {!compact && <path d="m166 166 668 668M166 834l668-668" opacity=".2" />}
+      {
+        Array.from({ length: compact ? 16 : 72 }, (_, i) => {
+          const angle = (i * Math.PI * 2) / (compact ? 16 : 72);
+          const outer = compact ? 380 : 471;
+          const inner = outer - (i % 6 === 0 ? 10 : 4);
+          return (
+            <line
+              x1={500 + Math.cos(angle) * inner}
+              y1={500 + Math.sin(angle) * inner}
+              x2={500 + Math.cos(angle) * outer}
+              y2={500 + Math.sin(angle) * outer}
+              opacity=".5"
+            />
+          );
+        })
+      }
+    </g>
+    {
+      !compact && (
+        <g class="constellations">
+          {constellations.map(points => (
+            <polyline points={points} />
+          ))}
+        </g>
+      )
+    }
+    <g class="star-points"
+      >{
+        stars.map(star => (
+          <circle cx={star.x} cy={star.y} r={star.r} opacity={star.opacity} />
+        ))
+      }</g
+    >
+    {
+      !compact && (
+        <g class="star-points">
+          {constellations.flatMap(points =>
+            points.split(" ").map(point => {
+              const [x, y] = point.split(",");
+              return <circle cx={x} cy={y} r="2.2" />;
+            })
+          )}
+        </g>
+      )
+    }
+    <circle cx="500" cy="500" r={compact ? 100 : 62} fill={`url(#${id}-glow)`}
+    ></circle>
+    <circle class="main-star" cx="500" cy="500" r={compact ? 14 : 5}></circle>
+    {
+      (compact
+        ? [
+            { x: 265, y: 715 },
+            { x: 669, y: 104 },
+          ]
+        : [
+            { x: 340, y: 312 },
+            { x: 754, y: 265 },
+            { x: 603, y: 616 },
+            { x: 265, y: 715 },
+            { x: 850, y: 211 },
+          ]
+      ).map((star, i) => (
+        <g class="glowing-star" style={`--star-delay: ${i * -0.9}s`}>
+          <>
+            <circle
+              cx={star.x}
+              cy={star.y}
+              r={compact ? 28 : 30}
+              fill={`url(#${id}-glow)`}
+            />
+            <circle
+              class="main-star"
+              cx={star.x}
+              cy={star.y}
+              r={compact ? 4 : 4.2}
+            />
+          </>
+        </g>
+      ))
+    }
+  </svg>
+  {
+    !compact &&
+      labels.map(label => (
+        <span
+          class:list={["star-label", label.side]}
+          style={`--label-x:${label.x}%;--label-y:${label.y}%`}
+        >
+          <>
+            <span>{label.name}</span>
+            <small>{label.detail}</small>
+          </>
+        </span>
+      ))
+  }
+</div>

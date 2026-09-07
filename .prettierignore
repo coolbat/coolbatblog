@@ -11,3 +11,6 @@
 !.prettierrc
 !eslint.config.mjs
 !README.md
+!/tests
+!playwright.config.ts
+!tailwind.config.cjs
