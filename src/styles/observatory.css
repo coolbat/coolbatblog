@@ -1,0 +1,852 @@
+/* ===== Coolbat Observatory ===== */
+
+.observatory-root {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  color: rgb(var(--color-text-base));
+  font-family: var(--font-body);
+  --obs-muted: 169, 173, 169;
+  --obs-line: rgba(185, 164, 123, 0.24);
+  animation: observatory-enter 0.9s ease-out both;
+}
+@keyframes observatory-enter {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.sky-canvas {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  /* 深空底色：中央微亮的墨蓝天穹渐变 */
+  background: radial-gradient(
+    120% 90% at 50% 42%,
+    rgba(16, 26, 44, 0.9) 0%,
+    rgba(8, 13, 26, 0.95) 45%,
+    #03050a 100%
+  );
+}
+/* 暗角：视线收向天区中央 */
+.sky-canvas::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    115% 115% at 50% 50%,
+    transparent 55%,
+    rgba(2, 4, 8, 0.55) 100%
+  );
+  z-index: 3;
+}
+
+.sky-tooltip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms;
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  color: rgb(var(--color-text-base));
+  background: rgba(8, 15, 20, 0.82);
+  border: 1px solid var(--obs-line);
+  padding: 0.3rem 0.7rem;
+  border-radius: 2px;
+  white-space: nowrap;
+  z-index: 4;
+}
+
+/* ---------- 顶栏 ---------- */
+.observatory-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.75rem;
+  font-size: 0.8125rem;
+}
+.observatory-brand {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  letter-spacing: 0.02em;
+  color: rgb(var(--color-text-base));
+  text-decoration: none;
+}
+.observatory-brand span[lang="en"] {
+  color: rgb(var(--obs-muted));
+  font-size: 0.875rem;
+  letter-spacing: 0.14em;
+}
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.exit-link {
+  color: rgb(var(--obs-muted));
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.exit-link:hover {
+  color: rgb(var(--color-accent));
+}
+
+/* ---------- 星座导览（键盘/读屏入口） ---------- */
+.sky-directory {
+  position: relative;
+}
+.sky-directory summary {
+  cursor: pointer;
+  color: rgb(var(--obs-muted));
+  letter-spacing: 0.1em;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  list-style: none;
+}
+.sky-directory summary::-webkit-details-marker {
+  display: none;
+}
+.sky-directory summary:hover {
+  color: rgb(var(--color-accent));
+}
+.directory-panel {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: 17rem;
+  max-height: 60vh;
+  overflow: auto;
+  background: rgba(8, 15, 20, 0.94);
+  border: 1px solid var(--obs-line);
+  padding: 1rem 1.25rem;
+  z-index: 8;
+}
+.directory-season {
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  color: rgb(var(--color-accent));
+  margin-bottom: 0.75rem;
+}
+.directory-panel ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.directory-panel li {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(185, 164, 123, 0.1);
+}
+.directory-panel li:last-child {
+  border-bottom: 0;
+}
+.directory-panel button {
+  background: none;
+  border: 0;
+  color: rgb(var(--color-text-base));
+  cursor: pointer;
+  font-size: 0.8125rem;
+  padding: 0.25rem 0;
+  min-height: 2rem;
+}
+.directory-panel button:hover {
+  color: rgb(var(--color-accent));
+}
+.directory-panel li > button span {
+  color: rgb(var(--obs-muted));
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  margin-left: 0.35rem;
+}
+.directory-objects {
+  display: block;
+  padding-left: 0.75rem;
+}
+.directory-objects button {
+  color: rgb(var(--obs-muted));
+  font-size: 0.75rem;
+  margin-right: 0.5rem;
+}
+
+/* ---------- 星座标签 ---------- */
+.constellation-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  pointer-events: none;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 240ms;
+  text-shadow: 0 0 12px rgba(3, 5, 8, 0.9);
+}
+.constellation-label.is-visible {
+  opacity: 1;
+}
+.label-en {
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgb(var(--color-accent));
+}
+.label-zh {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  letter-spacing: 0.2em;
+  margin-top: 0.15rem;
+}
+.label-season {
+  display: block;
+  font-size: 0.625rem;
+  letter-spacing: 0.16em;
+  color: rgb(var(--obs-muted));
+  margin-top: 0.25rem;
+}
+
+/* ---------- 底部信息 ---------- */
+.sky-disclaimer {
+  position: absolute;
+  left: 1.75rem;
+  bottom: 1.25rem;
+  z-index: 5;
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  color: rgba(169, 173, 169, 0.72);
+  pointer-events: none;
+}
+.sky-disclaimer span {
+  display: block;
+  line-height: 1.9;
+}
+.season-caption {
+  position: absolute;
+  right: 1.75rem;
+  bottom: 5.25rem;
+  z-index: 5;
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+  color: rgb(var(--obs-muted));
+  pointer-events: none;
+}
+.season-caption span[lang="en"] {
+  color: rgb(var(--color-accent));
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* ---------- 四季切换 ---------- */
+.season-switcher {
+  position: absolute;
+  right: 1.75rem;
+  bottom: 1.5rem;
+  z-index: 6;
+  display: flex;
+  gap: 1.4rem;
+}
+.season-switcher button {
+  position: relative;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0.35rem 0.1rem;
+  min-height: 44px;
+  color: rgb(var(--obs-muted));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+.season-switcher button:disabled {
+  cursor: default;
+}
+.season-en {
+  font-size: 0.625rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.season-zh {
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  letter-spacing: 0.3em;
+}
+.season-switcher button::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgb(var(--color-accent));
+  opacity: 0;
+  transition: opacity 200ms;
+}
+.season-switcher button[aria-pressed="true"] {
+  color: rgb(var(--color-text-base));
+}
+.season-switcher button[aria-pressed="true"]::after {
+  opacity: 1;
+}
+.season-switcher button:hover:not(:disabled) {
+  color: rgb(var(--color-accent));
+}
+
+/* ---------- 首次提示 ---------- */
+.intro-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 18%;
+  transform: translateX(-50%);
+  z-index: 5;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  letter-spacing: 0.22em;
+  line-height: 2.2;
+  color: rgba(232, 228, 218, 0.85);
+  opacity: 0;
+  transition: opacity 1.2s;
+  pointer-events: none;
+}
+.intro-hint.is-visible {
+  opacity: 1;
+}
+
+/* ---------- 目标 CTA ---------- */
+.object-cta {
+  position: absolute;
+  left: 50%;
+  bottom: 2rem;
+  transform: translateX(-50%);
+  z-index: 6;
+  text-align: center;
+  animation: cta-enter 0.5s ease-out both;
+}
+.object-cta p {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.6rem;
+  text-shadow: 0 0 10px rgba(3, 5, 8, 0.9);
+}
+.cta-catalog {
+  color: rgb(var(--color-accent));
+  margin-right: 0.5rem;
+  letter-spacing: 0.14em;
+}
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+  padding: 0.55rem 1.5rem;
+  background: rgba(8, 15, 20, 0.6);
+  border: 1px solid rgba(185, 164, 123, 0.68);
+  color: rgb(var(--color-text-base));
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  transition:
+    background-color 200ms,
+    border-color 200ms;
+}
+.cta-button:hover {
+  background: rgba(185, 164, 123, 0.14);
+  border-color: rgb(var(--color-accent));
+}
+@keyframes cta-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ---------- 星座信息卡 ---------- */
+.constellation-card {
+  position: absolute;
+  top: 50%;
+  right: 2rem;
+  transform: translateY(-50%);
+  z-index: 6;
+  width: min(21rem, calc(100vw - 3rem));
+  max-height: min(74vh, 40rem);
+  overflow: auto;
+  background: rgba(8, 15, 20, 0.86);
+  border: 1px solid var(--obs-line);
+  padding: 1.75rem 1.75rem 1.5rem;
+  animation: card-enter 0.5s ease-out both;
+  backdrop-filter: blur(6px);
+}
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+.card-close {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.5rem;
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: 0;
+  color: rgb(var(--obs-muted));
+  font-size: 1.375rem;
+  cursor: pointer;
+}
+.card-close:hover {
+  color: rgb(var(--color-text-base));
+}
+.card-eyebrow {
+  font-size: 0.625rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgb(var(--color-accent));
+  margin-bottom: 0.5rem;
+}
+.constellation-card h2 {
+  font-family: var(--font-display);
+  font-size: 1.625rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.75rem;
+}
+.constellation-card h2 span {
+  display: block;
+  font-size: 0.8125rem;
+  letter-spacing: 0.2em;
+  color: rgb(var(--obs-muted));
+  margin-top: 0.25rem;
+}
+.card-summary {
+  font-size: 0.875rem;
+  line-height: 1.95;
+  color: rgba(232, 228, 218, 0.88);
+  margin-bottom: 1.25rem;
+}
+.card-section {
+  border-top: 1px solid var(--obs-line);
+  padding: 0.85rem 0;
+}
+.card-section h3 {
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  color: rgb(var(--obs-muted));
+  margin: 0 0 0.5rem;
+}
+.card-section ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+.card-section button {
+  background: none;
+  border: 0;
+  padding: 0.3rem 0;
+  min-height: 2rem;
+  color: rgb(var(--color-text-base));
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+.card-section button:hover,
+.card-section button[aria-pressed="true"] {
+  color: rgb(var(--color-accent));
+}
+.card-section button span {
+  color: rgb(var(--obs-muted));
+  font-size: 0.6875rem;
+  margin-left: 0.3rem;
+}
+.card-meta {
+  display: flex;
+  gap: 2rem;
+  border-top: 1px solid var(--obs-line);
+  padding: 0.85rem 0;
+  margin: 0;
+}
+.card-meta dt {
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  color: rgb(var(--obs-muted));
+  margin-bottom: 0.25rem;
+}
+.card-meta dd {
+  margin: 0;
+  font-size: 0.8125rem;
+}
+.card-cta {
+  width: 100%;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+.card-external {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: rgb(var(--obs-muted));
+  text-decoration: none;
+}
+.card-external:hover {
+  color: rgb(var(--color-accent));
+}
+
+/* ---------- 望远镜 ---------- */
+.telescope {
+  position: absolute;
+  left: 2.25rem;
+  bottom: 3.5rem;
+  z-index: 5;
+  width: 90px;
+  height: 110px;
+  pointer-events: none;
+  opacity: 0.9;
+  transition: opacity 0.4s;
+}
+.telescope.is-hidden {
+  opacity: 0;
+}
+.telescope-tube {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  transform-origin: 50% 88%;
+  transform: translateX(-50%) rotate(-38deg);
+}
+.tl-body {
+  fill: rgba(35, 42, 45, 0.95);
+  stroke: rgba(185, 164, 123, 0.85);
+  stroke-width: 1.4;
+}
+.tl-lens {
+  fill: rgba(232, 213, 175, 0.95);
+}
+.telescope-mount {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  transform: translateX(-50%);
+}
+.tl-leg {
+  stroke: rgba(185, 164, 123, 0.75);
+  stroke-width: 2.4;
+  fill: none;
+}
+.tl-body-fill {
+  fill: rgba(35, 42, 45, 0.95);
+  stroke: rgba(185, 164, 123, 0.8);
+}
+.telescope-ground {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 110px;
+  height: 1px;
+  background: rgba(185, 164, 123, 0.3);
+}
+
+/* ---------- 望远镜视野 ---------- */
+.telescope-view {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: #03050a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: tv-black 0.28s ease-out both;
+}
+@keyframes tv-black {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.telescope-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 60fr) minmax(0, 34fr);
+  gap: 3rem;
+  align-items: center;
+  width: min(100% - 4rem, 74rem);
+  padding: 2rem 0;
+}
+.telescope-eyepiece {
+  position: relative;
+  aspect-ratio: 1;
+  max-height: 76vh;
+  margin-inline: auto;
+  width: 100%;
+  max-width: 76vh;
+}
+.telescope-eyepiece img,
+.telescope-visual-canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  animation: tv-reveal 1.1s 0.22s ease-out both;
+}
+.telescope-visual-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(
+      circle at 42% 40%,
+      rgba(185, 164, 123, 0.25),
+      transparent 45%
+    ),
+    radial-gradient(circle at 50% 50%, #0a121c, #04070b);
+  animation: tv-reveal 1.1s 0.22s ease-out both;
+}
+@keyframes tv-reveal {
+  from {
+    clip-path: circle(4% at 50% 50%);
+    opacity: 0.4;
+  }
+  to {
+    clip-path: circle(50% at 50% 50%);
+    opacity: 1;
+  }
+}
+.eyepiece-ring {
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1px solid rgba(185, 164, 123, 0.4);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.9) inset;
+  pointer-events: none;
+}
+.telescope-info .eyebrow {
+  font-size: 0.625rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgb(var(--color-accent));
+  margin-bottom: 0.75rem;
+}
+.telescope-info h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 2rem;
+  letter-spacing: 0.04em;
+  margin: 0 0 1.25rem;
+}
+.telescope-info h2 span {
+  display: block;
+  font-size: 0.875rem;
+  letter-spacing: 0.16em;
+  color: rgb(var(--obs-muted));
+  margin-top: 0.35rem;
+}
+.telescope-info dl {
+  margin: 0 0 1.25rem;
+  border-top: 1px solid var(--obs-line);
+}
+.telescope-info dl > div {
+  display: flex;
+  gap: 1.5rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(185, 164, 123, 0.12);
+}
+.telescope-info dt {
+  flex: none;
+  width: 3.5rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  color: rgb(var(--obs-muted));
+  padding-top: 0.15rem;
+}
+.telescope-info dd {
+  margin: 0;
+  font-size: 0.875rem;
+}
+.telescope-summary {
+  font-size: 0.875rem;
+  line-height: 2;
+  color: rgba(232, 228, 218, 0.88);
+  margin-bottom: 1.5rem;
+}
+.explore-link {
+  text-decoration: none;
+}
+.telescope-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: 0;
+  color: rgb(var(--obs-muted));
+  font-size: 1.75rem;
+  cursor: pointer;
+  z-index: 11;
+}
+.telescope-close:hover {
+  color: rgb(var(--color-text-base));
+}
+
+/* ---------- WebGL 降级 ---------- */
+.fallback-sky svg {
+  width: 100%;
+  height: 100%;
+}
+.fallback-constellation {
+  cursor: pointer;
+  outline-offset: 4px;
+}
+.fallback-star {
+  fill: #e8e4da;
+}
+.fallback-star.mag-1 {
+  fill: #f2e6c8;
+}
+.fallback-line {
+  stroke: rgba(185, 164, 123, 0.4);
+  stroke-width: 0.7;
+}
+.fallback-label {
+  fill: rgba(169, 173, 169, 0.9);
+  font-size: 15px;
+  text-anchor: middle;
+  letter-spacing: 0.3em;
+}
+.fallback-dso {
+  fill: none;
+  stroke: rgba(185, 164, 123, 0.7);
+  stroke-width: 1;
+}
+.fallback-note {
+  position: absolute;
+  left: 50%;
+  bottom: 4.5rem;
+  transform: translateX(-50%);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  color: rgb(var(--obs-muted));
+}
+
+/* ---------- 移动端 ---------- */
+@media (max-width: 767px) {
+  .observatory-topbar {
+    padding: 0.75rem 1rem;
+  }
+  .topbar-actions {
+    gap: 0.85rem;
+  }
+  .sky-disclaimer {
+    display: none;
+  }
+  .season-caption {
+    right: 1rem;
+    bottom: 6.5rem;
+    font-size: 0.75rem;
+  }
+  .season-switcher {
+    right: 1rem;
+    left: 1rem;
+    bottom: 0.75rem;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .telescope {
+    left: 0.75rem;
+    bottom: 6rem;
+    transform: scale(0.8);
+    transform-origin: bottom left;
+  }
+  .constellation-card {
+    top: auto;
+    right: 1rem;
+    left: 1rem;
+    bottom: 5.5rem;
+    transform: none;
+    width: auto;
+    max-height: 52vh;
+    animation-name: card-enter-mobile;
+  }
+  @keyframes card-enter-mobile {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .object-cta {
+    bottom: 5.5rem;
+    width: calc(100% - 2rem);
+  }
+  .telescope-stage {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    width: calc(100% - 2rem);
+    max-height: 100vh;
+    overflow: auto;
+    padding: 3.5rem 0 1.5rem;
+  }
+  .telescope-eyepiece {
+    max-width: 62vw;
+    max-height: none;
+  }
+  .telescope-info h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* ---------- 动效减弱 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .constellation-card,
+  .object-cta,
+  .telescope-view,
+  .telescope-eyepiece img,
+  .telescope-visual-canvas,
+  .telescope-visual-fallback {
+    animation-duration: 0.01ms !important;
+  }
+  .constellation-label,
+  .sky-tooltip,
+  .intro-hint {
+    transition: none;
+  }
+}

@@ -1,0 +1,90 @@
+---
+import { SITE, LOCALE } from "@config";
+import { CONSTELLATIONS } from "@data/observatory/constellations";
+import { SEASONS } from "@data/observatory/seasons";
+import ObservatoryApp from "@components/observatory/ObservatoryApp";
+import "@styles/base.css";
+import "@styles/observatory.css";
+
+const title = "Coolbat Observatory — Interactive Seasonal Night Sky";
+const description =
+  "Explore a poetic interactive night sky through the four seasons, constellations, stars and deep-sky objects.";
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<!doctype html>
+<html lang={LOCALE.lang ?? "zh-CN"} data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalURL} />
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="author" content={SITE.author} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#080f14" />
+    <link
+      rel="preload"
+      href="/fonts/noto-serif-sc-display-0.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+  </head>
+  <body>
+    <ObservatoryApp client:only="react" />
+
+    <noscript>
+      <p style="padding: 2rem; text-align: center;">
+        Coolbat Observatory 需要启用 JavaScript
+        才能呈现交互式星空。以下是本页收录的内容概览。
+      </p>
+    </noscript>
+
+    <!-- 可抓取内容：四季与星座文字清单（SEO，见 PRD §36） -->
+    <section class="sr-only" aria-label="观星台内容概览">
+      <h1>Coolbat Observatory · 观星台</h1>
+      <p>
+        北半球代表性四季星空。拖动探索天空，点击星座与亮星，通过望远镜靠近星云与星系。
+      </p>
+      {
+        SEASONS.map(season => (
+          <section>
+            <h2>
+              {season.nameZh}季 · {season.nameEn} — {season.subtitleZh}
+            </h2>
+            <ul>
+              {season.constellations.map(id => {
+                const c = CONSTELLATIONS.find(k => k.id === id)!;
+                return (
+                  <li>
+                    {c.nameZh}（{c.nameEn}）：{c.summaryZh}
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ))
+      }
+      <section>
+        <h2>北天常驻星座</h2>
+        <ul>
+          {
+            CONSTELLATIONS.filter(c => c.season === "circumpolar").map(c => (
+              <li>
+                {c.nameZh}（{c.nameEn}）：{c.summaryZh}
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </section>
+  </body>
+</html>

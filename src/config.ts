@@ -168,3 +168,13 @@ export const CONTACTS = [
     description: "日常分享与沿途思考",
   },
 ] as const;
+
+/**
+ * Coolbat Observatory 配置。
+ * externalBaseUrl 是外部天文地理宇宙站的占位域名（待建站），
+ * 外链规则：{base}/objects/{slug}、{base}/constellations/{id}；
+ * 站点建成后只需修改此处的 base。
+ */
+export const OBSERVATORY = {
+  externalBaseUrl: "https://cosmos.coolbat.xyz",
+} as const;

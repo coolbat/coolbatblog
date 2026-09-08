@@ -866,3 +866,114 @@ html:not([data-js]) .theme-button {
     padding-bottom: 0.25rem;
   }
 }
+
+/* ===== 观星台入口（星图中心彩蛋，PRD §7） ===== */
+.portal-star {
+  pointer-events: auto;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  z-index: 4;
+}
+.portal-tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.6rem);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  text-align: center;
+  font-size: 0.625rem;
+  letter-spacing: 0.28em;
+  color: rgb(var(--color-text-base));
+  opacity: 0;
+  transition: opacity 240ms;
+  pointer-events: none;
+}
+.portal-tooltip [lang="en"] {
+  display: block;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgb(var(--color-accent));
+  margin-bottom: 0.2rem;
+}
+.portal-star:hover .portal-tooltip,
+.portal-star:focus-visible .portal-tooltip {
+  opacity: 1;
+}
+.portal-star.is-awake .portal-tooltip {
+  opacity: 0;
+  transition: opacity 120ms;
+}
+/* 中心星可发现性：每 8s 一次轻微呼吸；hover/聚焦时提亮 */
+.star-map:not(.compact) .center-glow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: portal-breathe 8s ease-in-out infinite;
+  transition: transform 320ms ease-out;
+}
+.star-map:has(.portal-star:hover) .center-glow,
+.star-map:has(.portal-star:focus-visible) .center-glow {
+  transform: scale(1.35);
+  animation-play-state: paused;
+}
+@keyframes portal-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+}
+/* 点击唤醒：闪光 + 冲击波 */
+.portal-flash,
+.portal-shock {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+.portal-flash {
+  background: radial-gradient(
+    circle,
+    rgba(240, 226, 190, 0.9),
+    transparent 62%
+  );
+}
+.portal-shock {
+  border: 1px solid rgba(232, 213, 175, 0.8);
+}
+.portal-star.is-awake .portal-flash {
+  animation: portal-flash 0.5s ease-out forwards;
+}
+.portal-star.is-awake .portal-shock {
+  animation: portal-shock 0.7s 80ms ease-out forwards;
+}
+@keyframes portal-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+@keyframes portal-shock {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.3);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(18);
+  }
+}

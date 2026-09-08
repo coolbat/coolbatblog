@@ -57,45 +57,55 @@ const labels = [
       >
     </defs>
     <g class="orbit-lines">
+      <g class="orbit-circles">
+        {
+          (compact ? [220, 295, 365] : [80, 166, 242, 326, 402, 443, 473]).map(
+            r => <circle cx="500" cy="500" r={r} opacity="0.7" />
+          )
+        }
+      </g>
       {
-        (compact
-          ? [220, 295, 365]
-          : [80, 166, 242, 326, 402, 443, 455, 473]
-        ).map((r, i) => (
-          <circle
-            cx="500"
-            cy="500"
-            r={r}
-            stroke-dasharray={i === 6 ? "1 6" : undefined}
-            opacity={i === 0 ? 0.45 : 0.7}
-          />
-        ))
-      }
-      <ellipse
-        cx="500"
-        cy="500"
-        rx={compact ? 400 : 458}
-        ry={compact ? 160 : 353}
-        transform="rotate(-54 500 500)"
-        opacity=".55"></ellipse>
-      <path d="M25 500H975M500 25V975" opacity=".4"></path>
-      {!compact && <path d="m166 166 668 668M166 834l668-668" opacity=".2" />}
-      {
-        Array.from({ length: compact ? 16 : 72 }, (_, i) => {
-          const angle = (i * Math.PI * 2) / (compact ? 16 : 72);
-          const outer = compact ? 380 : 471;
-          const inner = outer - (i % 6 === 0 ? 10 : 4);
-          return (
-            <line
-              x1={500 + Math.cos(angle) * inner}
-              y1={500 + Math.sin(angle) * inner}
-              x2={500 + Math.cos(angle) * outer}
-              y2={500 + Math.sin(angle) * outer}
-              opacity=".5"
+        !compact && (
+          <g class="orbit-dashed">
+            <circle
+              cx="500"
+              cy="500"
+              r="455"
+              stroke-dasharray="1 6"
+              opacity="0.45"
             />
-          );
-        })
+          </g>
+        )
       }
+      <g class="orbit-guides">
+        <ellipse
+          cx="500"
+          cy="500"
+          rx={compact ? 400 : 458}
+          ry={compact ? 160 : 353}
+          transform="rotate(-54 500 500)"
+          opacity=".55"></ellipse>
+        <path d="M25 500H975M500 25V975" opacity=".4"></path>
+        {!compact && <path d="m166 166 668 668M166 834l668-668" opacity=".2" />}
+      </g>
+      <g class="orbit-ticks">
+        {
+          Array.from({ length: compact ? 16 : 72 }, (_, i) => {
+            const angle = (i * Math.PI * 2) / (compact ? 16 : 72);
+            const outer = compact ? 380 : 471;
+            const inner = outer - (i % 6 === 0 ? 10 : 4);
+            return (
+              <line
+                x1={500 + Math.cos(angle) * inner}
+                y1={500 + Math.sin(angle) * inner}
+                x2={500 + Math.cos(angle) * outer}
+                y2={500 + Math.sin(angle) * outer}
+                opacity=".5"
+              />
+            );
+          })
+        }
+      </g>
     </g>
     {
       !compact && (
@@ -125,8 +135,12 @@ const labels = [
         </g>
       )
     }
-    <circle cx="500" cy="500" r={compact ? 100 : 62} fill={`url(#${id}-glow)`}
-    ></circle>
+    <circle
+      class="center-glow"
+      cx="500"
+      cy="500"
+      r={compact ? 100 : 62}
+      fill={`url(#${id}-glow)`}></circle>
     <circle class="main-star" cx="500" cy="500" r={compact ? 14 : 5}></circle>
     {
       (compact
@@ -174,5 +188,22 @@ const labels = [
           </>
         </span>
       ))
+  }
+  {
+    !compact && (
+      <a
+        class="portal-star"
+        href="/observatory/"
+        data-astro-reload
+        aria-label="进入观星台 Coolbat Observatory"
+      >
+        <span class="portal-flash" aria-hidden="true" />
+        <span class="portal-shock" aria-hidden="true" />
+        <span class="portal-tooltip" aria-hidden="true">
+          <span lang="en">Enter Observatory</span>
+          进入观星台
+        </span>
+      </a>
+    )
   }
 </div>
